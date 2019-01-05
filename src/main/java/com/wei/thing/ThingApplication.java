@@ -1,9 +1,11 @@
 package com.wei.thing;
 
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
+@MapperScan("com.wei.thing.dao")
 public class ThingApplication {
 
     public static void main(String[] args) {

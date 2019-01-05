@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="zh">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <script src="/js/echarts.common.min.js"></script>
+    <script src="/js/jquery-3.3.1.min.js"></script>
+    <link rel="icon" href="/assets/images/favicon.png" type="image/png">
+    <title>Home</title>
+
+    <!--Begin  Page Level  CSS -->
+    <link href="/assets/plugins/morris-chart/morris.css" rel="stylesheet">
+    <link href="/assets/plugins/jquery-ui/jquery-ui.min.css" rel="stylesheet"/>
+    <!--End  Page Level  CSS -->
+    <link href="/assets/css/icons.css" rel="stylesheet">
+    <link href="/assets/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/assets/css/style.css" rel="stylesheet">
+    <link href="/assets/css/responsive.css" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="js/html5shiv.min.js"></script>
+    <script src="js/respond.min.js"></script>
+    <![endif]-->
+
+</head>
+
+<body class="sticky-header">
+
+
+<!--Start left side Menu-->
+<div class="left-side sticky-left-side">
+
+    <!--logo-->
+    <div class="logo">
+        <a href="index.html"><img src="/assets/images/logo.png" alt=""></a>
+    </div>
+
+    <div class="logo-icon text-center">
+        <a href="index.html"><img src="/assets/images/logo-icon.png" alt=""></a>
+    </div>
+    <!--logo-->
+
+    <div class="left-side-inner">
+        <!--Sidebar nav-->
+        <ul class="nav nav-pills nav-stacked custom-nav">
+            <li class="menu-list nav-active"><a href="index.html"><i class="icon-home"></i> <span>数据观测台</span></a>
+                <ul class="sub-menu-list">
+                    <li class="active"><a href="/index"> 实时数据观测</a></li>
+                    <li><a href="/history"> 历史数据查询</a></li>
+                </ul>
+            </li>
+
+
+        </ul>
+        <!--End sidebar nav-->
+
+    </div>
+</div>
+<!--End left side menu-->
+
+
+<!-- main content start-->
+<div class="main-content">
+
+    <!-- header section start-->
+    <div class="header-section">
+        <h3>实时数据观测</h3>
+
+    </div>
+    <!-- header section end-->
+
+
+    <!--body wrapper start-->
+    <div class="wrapper">
+
+
+        <!--Start row-->
+        <div class="row">
+            <div class="container">
+                <!-- 为ECharts准备一个具备大小（宽高）的Dom -->
+                <div id="main" style="width: 600px;height:400px"></div>
+                <div id="main2" style="width: 600px;height:400px;"></div>
+                <script type="text/javascript" th:inline="javascript">
+                    // 基于准备好的dom，初始化echarts实例
+                    var myChart = echarts.init(document.getElementById('main'));
+                    var myChart2 = echarts.init(document.getElementById('main2'));
+
+
+                    // 指定图表的配置项和数据
+                    var option = {
+                        title: {
+                            text: '光线强度变化情况',
+                            subtext: ''
+                        },
+                        tooltip: {
+                            trigger: 'axis'
+                        },
+                        legend: {
+                            data: ['光线强度(lux)']
+                        },
+                        animation: false,
+                        toolbox: {
+                            show: true,
+                            feature: {
+                                mark: {show: true},
+                                dataView: {show: true, readOnly: false},
+                                magicType: {show: true, type: ['line', 'bar']},
+                                restore: {show: true},
+                                saveAsImage: {show: true}
+                            }
+                        },
+                        calculable: true,
+                        xAxis: [
+                            {
+                                type: 'category',
+                                boundaryGap: false,
+                                data: []
+                            }
+                        ],
+                        yAxis: [
+                            {
+                                type: 'value',
+                                axisLabel: {
+                                    formatter: '{value} lux'
+                                }
+                            }
+                        ],
+                        series: [
+                            {
+                                name: '光线强度(lux)',
+                                type: 'line',
+                                data: [],
+                                markPoint: {
+                                    data: [
+                                        {type: 'max', name: '最大值'},
+                                        {type: 'min', name: '最小值'}
+                                    ]
+                                },
+                                markLine: {
+                                    data: [
+                                        {type: 'average', name: '平均值'}
+                                    ]
+                                }
+                            }
+                        ]
+                    };
+
+                    var option2 = {
+                        title: {
+                            text: '加速度变化情况',
+                            subtext: ''
+                        },
+                        tooltip: {
+                            trigger: 'axis'
+                        },
+                        animation: false,
+                        legend: {
+                            data: ['加速度（m/s)']
+                        },
+                        toolbox: {
+                            show: true,
+                            feature: {
+                                mark: {show: true},
+                                dataView: {show: true, readOnly: false},
+                                magicType: {show: true, type: ['line', 'bar']},
+                                restore: {show: true},
+                                saveAsImage: {show: true}
+                            }
+                        },
+                        calculable: true,
+                        xAxis: [
+                            {
+                                type: 'category',
+                                boundaryGap: false,
+                                data: []
+                            }
+                        ],
+                        yAxis: [
+                            {
+                                type: 'value',
+                                axisLabel: {
+                                    formatter: '{value}'
+                                }
+                            }
+                        ],
+                        series: [
+                            {
+                                name: '加速度（m/s^2)',
+                                type: 'line',
+                                data: [],
+                                markPoint: {
+                                    data: [
+                                        {type: 'max', name: '最大值'},
+                                        {type: 'min', name: '最小值'}
+                                    ]
+                                },
+                                markLine: {
+                                    data: [
+                                        {type: 'average', name: '平均值'}
+                                    ]
+                                }
+                            }
+                        ]
+                    };
+
+
+                    //
+                    init1();
+                    init2();
+                    setInterval(function () {
+                        init1();
+                    }, 1000);
+                    setInterval(function () {
+                        init2();
+                    }, 1000);
+
+                    function init1() {
+
+                        //myChart.clear();
+                        //myChart2.clear();
+                        var list;
+                        var list2;
+                        $.ajax({
+                            type: "get",
+                            url: "/realtime/table1",
+                            async: false,
+                            success: function (data, textStatus, jqXHR) {
+                                //alert(data)
+                                list = data.toString();
+
+
+                            },
+                            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                                alert("请求失败！");
+                            }
+                        });
+                        // $.ajax({
+                        //     type: "get",
+                        //     url: "/realtime/table2",
+                        //     async : true,
+                        //     success: function (data ,textStatus, jqXHR)
+                        //     {
+                        //         list2=data.toString();
+                        //
+                        //     },
+                        //     error:function (XMLHttpRequest, textStatus, errorThrown) {
+                        //         alert("请求失败！");
+                        //     }
+                        // });
+
+
+                        if (list != null) {
+                            list = JSON.parse(list);
+                        }
+                        // if (list2 != null) {
+                        //     list2 = JSON.parse(list2);
+                        // }
+                        option.title.subtext = "";
+                        option.title.subtext = list[list.length - 1].create_time + ' ~~~~ ' + list[0].create_time;
+                        // option2.title.subtext="";
+                        // option2.title.subtext = list2[0].create_time + ' ~~~~ ' + list2[list2.length - 1].create_time;
+                        option.xAxis[0].data = [];
+                        option.series[0].data = [];
+                        // option2.xAxis[0].data=[];
+                        // option2.series[0].data=[];
+                        for (var i = list.length - 1; i >= 0; i--) {
+                            //数据处理
+                            var d = new Date(list[i].create_time);
+                            option.xAxis[0].data.push(d.getSeconds());
+                            //option.xAxis[0].data.push(list[i].date);
+                            option.series[0].data.push(list[i].value);
+
+                        }
+                        // for (var i = list2.length-1; i >= 0 ; i--) {
+                        //     var d2 = new Date(list2[i].create_time);
+                        //     option2.xAxis[0].data.push(d2.getSeconds());
+                        //     //option2.xAxis[0].data.push(list[i].date);
+                        //     option2.series[0].data.push(list2[i].value);
+                        // }
+
+                        myChart.setOption(option);
+                        // myChart2.setOption(option2);
+
+                    }
+
+                    function init2() {
+
+                        // myChart.clear();
+                        //myChart2.clear();
+                        var list;
+                        var list2;
+                        // $.ajax({
+                        //     type: "get",
+                        //     url: "/realtime/table1",
+                        //     async : true,
+                        //     success: function (data ,textStatus, jqXHR)
+                        //     {
+                        //         //alert(data)
+                        //         list=data.toString();
+                        //
+                        //
+                        //     },
+                        //     error:function (XMLHttpRequest, textStatus, errorThrown) {
+                        //         alert("请求失败！");
+                        //     }
+                        // });
+                        $.ajax({
+                            type: "get",
+                            url: "/realtime/table2",
+                            async: false,
+                            success: function (data, textStatus, jqXHR) {
+                                list2 = data.toString();
+
+                            },
+                            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                                alert("请求失败！");
+                            }
+                        });
+
+
+                        // if (list != null) {
+                        //     list = JSON.parse(list);
+                        // }
+                        if (list2 != null) {
+                            list2 = JSON.parse(list2);
+                        }
+                        // option.title.subtext="";
+                        // option.title.subtext = list[0].create_time + ' ~~~~ ' + list[list.length - 1].create_time;
+                        option2.title.subtext = "";
+                        option2.title.subtext = list2[list2.length - 1].create_time + ' ~~~~ ' + list2[0].create_time;
+                        // option.xAxis[0].data=[];
+                        // option.series[0].data=[];
+                        option2.xAxis[0].data = [];
+                        option2.series[0].data = [];
+                        // for (var i = list.length-1; i >= 0 ; i--) {
+                        //     //数据处理
+                        //     var d = new Date(list[i].create_time);
+                        //     option.xAxis[0].data.push(d.getSeconds());
+                        //     //option.xAxis[0].data.push(list[i].date);
+                        //     option.series[0].data.push(list[i].value);
+                        //
+                        // }
+                        for (var i = list2.length - 1; i >= 0; i--) {
+                            var d2 = new Date(list2[i].create_time);
+                            option2.xAxis[0].data.push(d2.getSeconds());
+                            //option2.xAxis[0].data.push(list[i].date);
+                            option2.series[0].data.push(list2[i].value);
+                        }
+
+                        // myChart.setOption(option);
+                        myChart2.setOption(option2);
+
+                    }
+
+
+                </script>
+            </div>
+        </div>
+        <!--End row-->
+
+        <!--Start row-->
+        <div class="row">
+            <!--Start info box-->
+            <div class="col-md-3 col-sm-6">
+
+            </div>
+            <!--End info box-->
+
+            <!--Start info box-->
+            <div class="col-md-3 col-sm-6">
+
+            </div>
+            <!--End info box-->
+
+            <!--Start info box-->
+            <div class="col-md-3 col-sm-6">
+
+            </div>
+            <!--End info box-->
+
+            <!--Start info box-->
+            <div class="col-md-3 col-sm-6">
+
+            </div>
+            <!--End info box-->
+
+        </div>
+        <!--End row-->
+
+
+        <!--Start row-->
+        <div class="row">
+
+        </div>
+
+
+        <div class="col-md-6">
+
+        </div><!-- /col-md-6-->
+
+
+    </div>
+    <!--End row-->
+
+
+    <!--Start row-->
+    <div class="row">
+
+
+    </div>
+    <!--End row-->
+
+</div>
+<!-- End Wrapper-->
+
+
+<!--Start  Footer -->
+<footer class="footer-main">Copyright &copy; 2018.Company name All rights reserved.<a target="_blank"
+                                                                                      href="http://sc.chinaz.com/moban/">&#x7F51;&#x9875;&#x6A21;&#x677F;</a>
+</footer>
+<!--End footer -->
+
+</div>
+<!--End main content -->
+
+
+<!--Begin core plugin -->
+<script src="/assets/js/jquery.min.js"></script>
+<script src="/assets/js/bootstrap.min.js"></script>
+<script src="/assets/plugins/moment/moment.js"></script>
+<script src="/assets/js/jquery.slimscroll.js "></script>
+<script src="/assets/js/jquery.nicescroll.js"></script>
+<script src="/assets/js/functions.js"></script>
+<!-- End core plugin -->
+
+<!--Begin Page Level Plugin-->
+<script src="/assets/plugins/morris-chart/morris.js"></script>
+<script src="/assets/plugins/morris-chart/raphael-min.js"></script>
+<script src="/assets/plugins/jquery-sparkline/jquery.sparkline.min.js"></script>
+<script src="/assets/pages/dashboard.js"></script>
+<!--End Page Level Plugin-->
+
+
+</body>
+
+</html>

@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="zh">
+<!--<meta http-equiv="Refresh" content="1" />-->
+<head>
+    <meta charset="utf-8">
+    <!-- 引入 ECharts 文件 -->
+    <script src="/js/echarts.common.min.js"></script>
+    <script src="/js/jquery-3.3.1.min.js"></script>
+</head>
+<body>
+<!-- 为ECharts准备一个具备大小（宽高）的Dom -->
+<div id="main" style="width: 600px;height:400px"></div>
+<div id="main2" style="width: 600px;height:400px;"></div>
+<script type="text/javascript" th:inline="javascript">
+    // 基于准备好的dom，初始化echarts实例
+    var myChart = echarts.init(document.getElementById('main'));
+    var myChart2 = echarts.init(document.getElementById('main2'));
+
+
+    // 指定图表的配置项和数据
+    var option = {
+        title: {
+            text: '光线强度变化情况',
+            subtext: ''
+        },
+        tooltip: {
+            trigger: 'axis'
+        },
+        legend: {
+            data: ['光线强度(lux)']
+        },
+        animation:false,
+        toolbox: {
+            show: true,
+            feature: {
+                mark: {show: true},
+                dataView: {show: true, readOnly: false},
+                magicType: {show: true, type: ['line', 'bar']},
+                restore: {show: true},
+                saveAsImage: {show: true}
+            }
+        },
+        calculable: true,
+        xAxis: [
+            {
+                type: 'category',
+                boundaryGap: false,
+                data: []
+            }
+        ],
+        yAxis: [
+            {
+                type: 'value',
+                axisLabel: {
+                    formatter: '{value} lux'
+                }
+            }
+        ],
+        series: [
+            {
+                name: '光线强度(lux)',
+                type: 'line',
+                data: [],
+                markPoint: {
+                    data: [
+                        {type: 'max', name: '最大值'},
+                        {type: 'min', name: '最小值'}
+                    ]
+                },
+                markLine: {
+                    data: [
+                        {type: 'average', name: '平均值'}
+                    ]
+                }
+            }
+        ]
+    };
+
+    var option2 = {
+        title: {
+            text: '加速度变化情况',
+            subtext: ''
+        },
+        tooltip: {
+            trigger: 'axis'
+        },
+        animation:false,
+        legend: {
+            data: ['加速度（m/s)']
+        },
+        toolbox: {
+            show: true,
+            feature: {
+                mark: {show: true},
+                dataView: {show: true, readOnly: false},
+                magicType: {show: true, type: ['line', 'bar']},
+                restore: {show: true},
+                saveAsImage: {show: true}
+            }
+        },
+        calculable: true,
+        xAxis: [
+            {
+                type: 'category',
+                boundaryGap: false,
+                data: []
+            }
+        ],
+        yAxis: [
+            {
+                type: 'value',
+                axisLabel: {
+                    formatter: '{value} lux'
+                }
+            }
+        ],
+        series: [
+            {
+                name: '加速度（m/s)',
+                type: 'line',
+                data: [],
+                markPoint: {
+                    data: [
+                        {type: 'max', name: '最大值'},
+                        {type: 'min', name: '最小值'}
+                    ]
+                },
+                markLine: {
+                    data: [
+                        {type: 'average', name: '平均值'}
+                    ]
+                }
+            }
+        ]
+    };
+
+
+//
+    init();
+    setInterval(function(){init();},1000);
+    function init() {
+
+        myChart.clear();
+        myChart2.clear();
+        var list;
+        var list2;
+        $.ajax({
+            type: "get",
+            url: "/realtime/table1",
+            async : false,
+            success: function (data ,textStatus, jqXHR)
+            {
+                //alert(data)
+                list=data.toString();
+            },
+            error:function (XMLHttpRequest, textStatus, errorThrown) {
+                alert("请求失败！");
+            }
+        });
+        $.ajax({
+            type: "get",
+            url: "/realtime/table2",
+            async : false,
+            success: function (data ,textStatus, jqXHR)
+            {
+                //alert(data1)
+                list2=data.toString();
+            },
+            error:function (XMLHttpRequest, textStatus, errorThrown) {
+                alert("请求失败！");
+            }
+        });
+
+        // var list = [[${list1}]];
+        // var list2= [[${list2}]];
+        //alert(list);
+
+        if (list != null) {
+            list = JSON.parse(list);
+        }
+        if (list2 != null) {
+            list2 = JSON.parse(list2);
+        }
+        option.title.subtext="";
+        option.title.subtext = list[0].create_time + ' ~~~~ ' + list[list.length - 1].create_time;
+        option2.title.subtext="";
+        option2.title.subtext = list2[0].create_time + ' ~~~~ ' + list2[list2.length - 1].create_time;
+        option.xAxis[0].data=[];
+        option.series[0].data=[];
+        option2.xAxis[0].data=[];
+        option2.series[0].data=[];
+        for (var i = list.length-1; i >= 0 ; i--) {
+            //数据处理
+            var d = new Date(list[i].create_time);
+            option.xAxis[0].data.push(d.getSeconds());
+            //option.xAxis[0].data.push(list[i].date);
+            option.series[0].data.push(list[i].value);
+
+        }
+        for (var i = list2.length-1; i >= 0 ; i--) {
+            var d2 = new Date(list2[i].create_time);
+            option2.xAxis[0].data.push(d2.getSeconds());
+            //option2.xAxis[0].data.push(list[i].date);
+            option2.series[0].data.push(list2[i].value);
+        }
+
+        myChart.setOption(option);
+        myChart2.setOption(option2);
+
+    }
+    // function refreshData(data){
+    //     if(!myChart){
+    //         return;
+    //     }
+    //
+    //     //更新数据
+    //     var option = myChart.getOption();
+    //     option.series[0].data = data;
+    //     myChart.setOption(option);
+    // }
+
+
+
+
+</script>
+</body>
+</html>

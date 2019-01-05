@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="zh">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <script src="/js/echarts.common.min.js"></script>
+    <script src="/js/jquery.js"></script>
+    <link rel="icon" href="/assets/images/favicon.png" type="image/png">
+    <title>Home</title>
+
+    <!--Begin  Page Level  CSS -->
+    <link href="/assets/plugins/morris-chart/morris.css" rel="stylesheet">
+    <link href="/assets/plugins/jquery-ui/jquery-ui.min.css" rel="stylesheet"/>
+    <!--End  Page Level  CSS -->
+    <link href="/assets/css/icons.css" rel="stylesheet">
+    <link href="/assets/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/assets/css/style.css" rel="stylesheet">
+    <link href="/assets/css/responsive.css" rel="stylesheet">
+    <script src="/js/jquery-ui.js"></script>
+    <script src="/js/jquery-ui-timepicker-addon.js"></script>
+
+    <link type="text/css" href="/css/jquery-ui-timepicker-addon.css" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <!--<script src="js/html5shiv.min.js"></script>-->
+    <!--<script src="js/respond.min.js"></script>-->
+    <!--<![endif]&ndash;&gt;-->
+
+</head>
+
+<body class="sticky-header">
+
+
+<!--Start left side Menu-->
+<div class="left-side sticky-left-side">
+
+    <!--logo-->
+    <div class="logo">
+        <a href="index.html"><img src="/assets/images/logo.png" alt=""></a>
+    </div>
+
+    <div class="logo-icon text-center">
+        <a href="index.html"><img src="/assets/images/logo-icon.png" alt=""></a>
+    </div>
+    <!--logo-->
+
+    <div class="left-side-inner">
+        <!--Sidebar nav-->
+        <ul class="nav nav-pills nav-stacked custom-nav">
+            <li class="menu-list nav-active"><a href="index.html"><i class="icon-home"></i> <span>数据观测台</span></a>
+                <ul class="sub-menu-list">
+                    <li class="active"><a href="/index"> 实时数据观测</a></li>
+                    <li><a href="/history"> 历史数据查询</a></li>
+                </ul>
+            </li>
+
+
+        </ul>
+        <!--End sidebar nav-->
+
+    </div>
+</div>
+<!--End left side menu-->
+
+
+<!-- main content start-->
+<div class="main-content">
+
+    <!-- header section start-->
+    <div class="header-section">
+        <h3>历史数据查询</h3>
+
+    </div>
+    <!-- header section end-->
+
+
+    <!--body wrapper start-->
+    <div class="wrapper">
+
+
+        <!--End row-->
+
+
+        <div style="margin: 0px;">
+            <input type="text" id="Time1" value="2019-01-05 00:00:00">
+            <input type="text" id="Time2" value="">
+            <select id="myselect">
+                <option value="value1">加速度</option>
+                <option value="value2">光照强度</option>
+            </select>
+            <button onclick="copyText()">查询</button>
+        </div>
+        <div id="main" style="width: 600px;height:400px"></div>
+        <div  style="width: 600px;height:400px">
+            <p id="ps"></p>
+        </div>
+
+        <script th:inline="javascript">
+            function formatDate(time, format='YY-MM-DD hh:mm:ss') {
+                var date = new Date(time);
+
+                var year = date.getFullYear(),
+                    month = date.getMonth() + 1,//月份是从0开始的
+                    day = date.getDate(),
+                    hour = date.getHours(),
+                    min = date.getMinutes(),
+                    sec = date.getSeconds();
+                var preArr = Array.apply(null, Array(10)).map(function (elem, index) {
+                    return '0' + index;
+                });////开个长度为10的数组 格式为 00 01 02 03
+
+                var newTime = format.replace(/YY/g, year)
+                    .replace(/MM/g, preArr[month] || month)
+                    .replace(/DD/g, preArr[day] || day)
+                    .replace(/hh/g, preArr[hour] || hour)
+                    .replace(/mm/g, preArr[min] || min)
+                    .replace(/ss/g, preArr[sec] || sec);
+
+                return newTime;
+            }
+
+            document.getElementById("Time2").value = formatDate(new Date().getTime(), 'YY/MM/DD hh:mm:ss');
+            $(function () {
+                $("#Time1").datetimepicker({
+                    defaultDate: $('#Time1').val(),
+                    dateFormat: "yy-mm-dd",
+                    showSecond: true,
+                    timeFormat: 'hh:mm:ss',
+                    stepHour: 1,
+                    stepMinute: 1,
+                    stepSecond: 1
+                })
+            })
+            $(function () {
+                $("#Time2").datetimepicker({
+                    defaultDate: $('#Time1').val(),
+                    dateFormat: "yy-mm-dd",
+                    showSecond: true,
+                    timeFormat: 'hh:mm:ss',
+                    stepHour: 1,
+                    stepMinute: 1,
+                    stepSecond: 1
+                })
+            })
+
+
+            function copyText() {
+                var time1 = $('#Time1').val();
+                var time2 = $('#Time2').val();
+                var select_value = document.getElementById("myselect").value;
+                var url;
+                var option;
+                if (select_value == "value1") {
+                    url = "/history/table2";
+                    option = {
+                        title: {
+                            text: '加速度历史数据',
+                            subtext: ''
+                        },
+                        tooltip: {
+                            trigger: 'axis'
+                        },
+                        animation: false,
+                        legend: {
+                            data: ['加速度（m/s)']
+                        },
+                        toolbox: {
+                            show: true,
+                            feature: {
+                                mark: {show: true},
+                                dataView: {show: true, readOnly: false},
+                                magicType: {show: true, type: ['line', 'bar']},
+                                restore: {show: true},
+                                saveAsImage: {show: true}
+                            }
+                        },
+                        calculable: true,
+                        xAxis: [
+                            {
+                                type: 'category',
+                                boundaryGap: false,
+                                data: []
+                            }
+                        ],
+                        yAxis: [
+                            {
+                                type: 'value',
+                                axisLabel: {
+                                    formatter: '{value}'
+                                }
+                            }
+                        ],
+                        series: [
+                            {
+                                name: '加速度（m/s^2)',
+                                type: 'line',
+                                data: [],
+                                markPoint: {
+                                    data: [
+                                        {type: 'max', name: '最大值'},
+                                        {type: 'min', name: '最小值'}
+                                    ]
+                                },
+                                markLine: {
+                                    data: [
+                                        {type: 'average', name: '平均值'}
+                                    ]
+                                }
+                            }
+                        ]
+                    };
+                } else {
+                    url = "/history/table1";
+                    option = {
+                        title: {
+                            text: '光线强度历史数据',
+                            subtext: ''
+                        },
+                        tooltip: {
+                            trigger: 'axis'
+                        },
+                        legend: {
+                            data: ['光线强度(lux)']
+                        },
+                        animation: false,
+                        toolbox: {
+                            show: true,
+                            feature: {
+                                mark: {show: true},
+                                dataView: {show: true, readOnly: false},
+                                magicType: {show: true, type: ['line', 'bar']},
+                                restore: {show: true},
+                                saveAsImage: {show: true}
+                            }
+                        },
+                        calculable: true,
+                        xAxis: [
+                            {
+                                type: 'category',
+                                boundaryGap: false,
+                                data: []
+                            }
+                        ],
+                        yAxis: [
+                            {
+                                type: 'value',
+                                axisLabel: {
+                                    formatter: '{value} lux'
+                                }
+                            }
+                        ],
+                        series: [
+                            {
+                                name: '光线强度(lux)',
+                                type: 'line',
+                                data: [],
+                                markPoint: {
+                                    data: [
+                                        {type: 'max', name: '最大值'},
+                                        {type: 'min', name: '最小值'}
+                                    ]
+                                },
+                                markLine: {
+                                    data: [
+                                        {type: 'average', name: '平均值'}
+                                    ]
+                                }
+                            }
+                        ]
+                    };
+                }
+
+                // 基于准备好的dom，初始化echarts实例
+                var myChart = echarts.init(document.getElementById('main'));
+                var list;
+                $.ajax({
+                    type: "get",
+                    url: url,
+                    data: { startTime: time1, endTime: time2 },
+                    async: false,
+                    // dataType:'json',
+                    success: function (data, textStatus, jqXHR) {
+                        list = data.toString();
+
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        alert("请求失败！");
+                    }
+                });
+
+
+                if (list == null || list.size == 0) {
+                    return;
+                }
+                list = JSON.parse(list);
+                option.title.subtext = list[list.length - 1].create_time + ' ~~~~ ' + list[0].create_time;
+                for (var i = list.length - 1; i >= 0; i--) {
+                    //数据处理
+
+                    //var d = new Date(list[i].create_time);
+                    option.xAxis[0].data.push(formatDate(new Date(list[i].create_time).getTime(), 'YY/MM/DD hh:mm:ss'));
+                    //option.xAxis[0].data.push(list[i].date);
+                    option.series[0].data.push(list[i].value);
+
+                }
+
+                myChart.setOption(option);
+                document.getElementById("ps").textContent="点击图表上方数据视图查看数据明细";
+
+
+            }
+
+
+        </script>
+
+
+    </div>
+    <!-- End Wrapper-->
+
+
+    <!--Start  Footer -->
+    <footer class="footer-main">Copyright &copy; 2018.Company name All rights reserved.<a target="_blank"
+                                                                                          href="http://sc.chinaz.com/moban/">&#x7F51;&#x9875;&#x6A21;&#x677F;</a>
+    </footer>
+    <!--End footer -->
+
+</div>
+<!--End main content -->
+
+
+<!--Begin core plugin -->
+<!--<script src="/assets/js/jquery.min.js"></script>-->
+<script src="/assets/js/bootstrap.min.js"></script>
+<script src="/assets/plugins/moment/moment.js"></script>
+<script src="/assets/js/jquery.slimscroll.js "></script>
+<script src="/assets/js/jquery.nicescroll.js"></script>
+<script src="/assets/js/functions.js"></script>
+<!-- End core plugin -->
+
+<!--Begin Page Level Plugin-->
+<script src="/assets/plugins/morris-chart/morris.js"></script>
+<script src="/assets/plugins/morris-chart/raphael-min.js"></script>
+<!--<script src="/assets/plugins/jquery-sparkline/jquery.sparkline.min.js"></script>-->
+<script src="/assets/pages/dashboard.js"></script>
+<!--End Page Level Plugin-->
+
+
+</body>
+
+</html>
