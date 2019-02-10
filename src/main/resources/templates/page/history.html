@@ -91,7 +91,7 @@
             <input type="text" id="Time2" value="">
             <select id="myselect">
                 <option value="value1">加速度</option>
-                <option value="value2">光照强度</option>
+                <option value="value2">陀螺仪</option>
             </select>
             <button onclick="copyText()">查询</button>
         </div>
@@ -101,7 +101,7 @@
         </div>
 
         <script th:inline="javascript">
-            function formatDate(time, format='YY-MM-DD hh:mm:ss') {
+            function formatDate(time, format='YY-MM-DD HH:mm:ss') {
                 var date = new Date(time);
 
                 var year = date.getFullYear(),
@@ -117,20 +117,20 @@
                 var newTime = format.replace(/YY/g, year)
                     .replace(/MM/g, preArr[month] || month)
                     .replace(/DD/g, preArr[day] || day)
-                    .replace(/hh/g, preArr[hour] || hour)
+                    .replace(/HH/g, preArr[hour] || hour)
                     .replace(/mm/g, preArr[min] || min)
                     .replace(/ss/g, preArr[sec] || sec);
 
                 return newTime;
             }
 
-            document.getElementById("Time2").value = formatDate(new Date().getTime(), 'YY/MM/DD hh:mm:ss');
+            document.getElementById("Time2").value = formatDate(new Date().getTime(), 'YY/MM/DD HH:mm:ss');
             $(function () {
                 $("#Time1").datetimepicker({
                     defaultDate: $('#Time1').val(),
                     dateFormat: "yy-mm-dd",
                     showSecond: true,
-                    timeFormat: 'hh:mm:ss',
+                    timeFormat: 'HH:mm:ss',
                     stepHour: 1,
                     stepMinute: 1,
                     stepSecond: 1
@@ -141,7 +141,7 @@
                     defaultDate: $('#Time1').val(),
                     dateFormat: "yy-mm-dd",
                     showSecond: true,
-                    timeFormat: 'hh:mm:ss',
+                    timeFormat: 'HH:mm:ss',
                     stepHour: 1,
                     stepMinute: 1,
                     stepSecond: 1
@@ -167,7 +167,7 @@
                         },
                         animation: false,
                         legend: {
-                            data: ['加速度（m/s)']
+                            data: ['加速度（m/s^2)']
                         },
                         toolbox: {
                             show: true,
@@ -218,14 +218,14 @@
                     url = "/history/table1";
                     option = {
                         title: {
-                            text: '光线强度历史数据',
+                            text: '陀螺仪历史数据',
                             subtext: ''
                         },
                         tooltip: {
                             trigger: 'axis'
                         },
                         legend: {
-                            data: ['光线强度(lux)']
+                            data: ['陀螺仪(radians / second)']
                         },
                         animation: false,
                         toolbox: {
@@ -250,13 +250,13 @@
                             {
                                 type: 'value',
                                 axisLabel: {
-                                    formatter: '{value} lux'
+                                    formatter: '{value} '
                                 }
                             }
                         ],
                         series: [
                             {
-                                name: '光线强度(lux)',
+                                name: '陀螺仪(radians / second)',
                                 type: 'line',
                                 data: [],
                                 markPoint: {
@@ -294,7 +294,9 @@
                 });
 
 
-                if (list == null || list.size == 0) {
+               // alert(list.length);
+                if (list == null || list.length == 2 || list=="") {
+                    alert("查询结果为空");
                     return;
                 }
                 list = JSON.parse(list);
@@ -303,7 +305,7 @@
                     //数据处理
 
                     //var d = new Date(list[i].create_time);
-                    option.xAxis[0].data.push(formatDate(new Date(list[i].create_time).getTime(), 'YY/MM/DD hh:mm:ss'));
+                    option.xAxis[0].data.push(formatDate(new Date(list[i].create_time).getTime(), 'YY/MM/DD HH:mm:ss'));
                     //option.xAxis[0].data.push(list[i].date);
                     option.series[0].data.push(list[i].value);
 

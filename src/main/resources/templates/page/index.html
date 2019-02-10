@@ -94,14 +94,14 @@
                     // 指定图表的配置项和数据
                     var option = {
                         title: {
-                            text: '光线强度变化情况',
+                            text: '陀螺仪变化情况',
                             subtext: ''
                         },
                         tooltip: {
                             trigger: 'axis'
                         },
                         legend: {
-                            data: ['光线强度(lux)']
+                            data: ['陀螺仪(radians / second)']
                         },
                         animation: false,
                         toolbox: {
@@ -126,13 +126,13 @@
                             {
                                 type: 'value',
                                 axisLabel: {
-                                    formatter: '{value} lux'
+                                    formatter: '{value}'
                                 }
                             }
                         ],
                         series: [
                             {
-                                name: '光线强度(lux)',
+                                name: '陀螺仪(radians / second)',
                                 type: 'line',
                                 data: [],
                                 markPoint: {
@@ -160,7 +160,7 @@
                         },
                         animation: false,
                         legend: {
-                            data: ['加速度（m/s)']
+                            data: ['加速度（m/s^2)']
                         },
                         toolbox: {
                             show: true,
